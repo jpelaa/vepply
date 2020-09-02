@@ -30,9 +30,10 @@ const Login: React.SFC<LoginProps> = () => {
           spacing={4}
           bg="white"
           p={8}
+          boxShadow="2xl"
           borderRadius="lg"
-          borderColor="gray.100"
-          border="1px solid"
+          border="1px"
+          borderColor="gray.300"
         >
           <Box textAlign="center">
             <Avatar
