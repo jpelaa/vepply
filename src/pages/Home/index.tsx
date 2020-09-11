@@ -2,12 +2,13 @@ import * as React from "react";
 import { Box } from "@chakra-ui/core";
 import Header from "./Header";
 import Body from "./Body";
-export interface HomeProps {}
+import { StateContext } from "context";
 
-const Home: React.SFC<HomeProps> = ({}) => {
+const Home: React.SFC = () => {
+  const { state } = React.useContext(StateContext);
   return (
     <Box>
-      <Header userName="false" />
+      <Header userName={state.userName} />
       <Body />
     </Box>
   );

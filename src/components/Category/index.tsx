@@ -4,9 +4,10 @@ import { Button } from "@chakra-ui/core";
 export interface CategoryProps {
   text: string;
   isSelected: boolean;
+  onClick: any;
 }
 
-const Category: React.SFC<CategoryProps> = ({ text, isSelected }) => {
+const Category: React.SFC<CategoryProps> = ({ text, isSelected, onClick }) => {
   return (
     <Button
       border="1px"
@@ -26,6 +27,7 @@ const Category: React.SFC<CategoryProps> = ({ text, isSelected }) => {
         boxShadow:
           "0 0 1px 2px rgba(88, 144, 255, .75), 0 1px 1px rgba(0, 0, 0, .15)",
       }}
+      onClick={onClick}
     >
       {text}
     </Button>

@@ -10,12 +10,15 @@ import {
   MenuItem,
   Icon,
 } from "@chakra-ui/core";
+import { initialState, StateContext } from "context";
 
 export interface HeaderProps {
   userName: String;
 }
 
 const Header: React.SFC<HeaderProps> = ({ userName }) => {
+  const { dispatch } = React.useContext(StateContext);
+
   return (
     <Box d="flex" justifyContent="space-between" px="6" py="2">
       <Box d="flex" justifyContent="center" alignItems="center">
@@ -28,7 +31,14 @@ const Header: React.SFC<HeaderProps> = ({ userName }) => {
             {userName || "Afsal"} <Icon name="chevron-down" />
           </MenuButton>
           <MenuList>
-            <MenuItem>Log out</MenuItem>
+            <MenuItem
+              onClick={() => {
+                localStorage.removeItem("hasLogin");
+                dispatch({ ...initialState });
+              }}
+            >
+              Log out
+            </MenuItem>
           </MenuList>
         </Menu>
       </Box>
