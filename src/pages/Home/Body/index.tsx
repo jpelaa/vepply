@@ -18,6 +18,7 @@ import {
   PopoverHeader,
   PopoverTrigger,
   PopoverContent,
+  useToast,
 } from "@chakra-ui/core";
 import AddNewSection from "./AddNewSection";
 import Category from "../../../components/Category";
@@ -25,11 +26,19 @@ import Category from "../../../components/Category";
 import { INVENTORY_TYPES, API_STATUS } from "../../../static/types";
 import { StateContext } from "context";
 import { getListData } from "../../../services/list";
+import { updateStatus } from "../../../services/update";
+
 import { withRouter, useParams, useHistory } from "react-router-dom";
 import { getColorByStatus } from "utils";
 
 const Body: React.SFC = () => {
   const { state, dispatch } = React.useContext(StateContext);
+  const [statusList, setStatusList] = React.useState<any>([]);
+  const [changeStatus, setChangeStatus] = React.useState<string>("");
+  const [selectedBillNo, setSelectedBillNo] = React.useState<string>("");
+  const [isLoading, setLoading] = React.useState<boolean>(false);
+  const toast = useToast();
+
   const { page } = useParams();
   const history = useHistory();
   const initialFocusRef = React.useRef<HTMLElement>(null);
@@ -49,12 +58,52 @@ const Body: React.SFC = () => {
     loadPagination(page - 1, state.selectedCategory);
   }, [page, state.selectedCategory]);
 
+  React.useEffect(() => {
+    const statusListFromStorage = localStorage.getItem(
+      `${state.selectedCategory}_status_list`
+    );
+    if (state.selectedCategory.length > 0 && statusListFromStorage) {
+      setStatusList(JSON.parse(statusListFromStorage));
+    }
+  }, [state.selectedCategory]);
+
+  const handleChangeStatus = async () => {
+    try {
+      setLoading(true);
+      await updateStatus(state.selectedCategory, selectedBillNo, changeStatus);
+      toast({
+        title: "Success",
+        position: "top-right",
+        description: "Successfully changed status",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+      setLoading(false);
+      loadPagination(page - 1, state.selectedCategory);
+    } catch (err) {
+      toast({
+        title: "Insert Failed",
+        position: "top-right",
+        description: "Something went wrong",
+        status: "warning",
+        duration: 9000,
+        isClosable: true,
+      });
+      setLoading(false);
+    }
+  };
+
   return (
     <Box p="10" bg="primary.200">
       <Heading textAlign="center" fontStyle="bold" color="grey.800">
         Inventory Board
       </Heading>
-      <AddNewSection />
+      <AddNewSection
+        callbackForAdding={() =>
+          loadPagination(page - 1, state.selectedCategory)
+        }
+      />
       <Box py="5" textAlign="center">
         {state.pageStatus === API_STATUS.done && state.list.length > 0 && (
           <>
@@ -114,7 +163,7 @@ const Body: React.SFC = () => {
                   border="1px solid"
                   borderColor="gray.400"
                   p="2"
-                  key={index}
+                  key={data.bill_no}
                 >
                   <Text>{data.amount}</Text>
                   <Text color="gray.500">{`${state.selectedCategory.slice(
@@ -143,7 +192,11 @@ const Body: React.SFC = () => {
                   <Box>
                     <Popover placement="left">
                       <PopoverTrigger>
-                        <Button variantColor="green" size="xs">
+                        <Button
+                          variantColor="green"
+                          size="xs"
+                          onClick={() => setSelectedBillNo(data.bill_no)}
+                        >
                           Edit
                         </Button>
                       </PopoverTrigger>
@@ -158,8 +211,16 @@ const Body: React.SFC = () => {
                         <PopoverArrow />
                         <PopoverCloseButton />
                         <PopoverBody>
-                          <Select>
-                            <option value="ss">SS</option>
+                          <Select
+                            onChange={(e: any) =>
+                              setChangeStatus(e.target.value)
+                            }
+                          >
+                            {statusList.map((data: any) => {
+                              return (
+                                <option value={data.value}>{data.label}</option>
+                              );
+                            })}
                           </Select>
                         </PopoverBody>
                         <PopoverFooter
@@ -171,7 +232,14 @@ const Body: React.SFC = () => {
                         >
                           <ButtonGroup size="sm">
                             <Button variant="solid">Cancel</Button>
-                            <Button variantColor="blue">Save</Button>
+                            <Button
+                              variantColor="blue"
+                              onClick={() => handleChangeStatus()}
+                              isLoading={isLoading}
+                              loadingText="Updating"
+                            >
+                              Save
+                            </Button>
                           </ButtonGroup>
                         </PopoverFooter>
                       </PopoverContent>

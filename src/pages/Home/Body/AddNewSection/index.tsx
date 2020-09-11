@@ -32,9 +32,13 @@ import { INVENTORY_TYPES } from "../../../../static/types";
 import { getModel } from "services/static";
 import { insertOrderEntry, insertServiceEntry } from "services/insert";
 
-export interface AddNewSectionProps {}
+export interface AddNewSectionProps {
+  callbackForAdding: any;
+}
 
-const AddNewSection: React.SFC<AddNewSectionProps> = () => {
+const AddNewSection: React.SFC<AddNewSectionProps> = ({
+  callbackForAdding,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef(null);
   const btnRef = React.useRef(null);
@@ -50,7 +54,6 @@ const AddNewSection: React.SFC<AddNewSectionProps> = () => {
     created_date: new Date(),
   });
   const toast = useToast();
-
   const [timerHandle, setTimerHandle] = React.useState<any>();
   const [isLoading, setLoading] = React.useState<any>(false);
 
@@ -91,6 +94,8 @@ const AddNewSection: React.SFC<AddNewSectionProps> = () => {
         duration: 9000,
         isClosable: true,
       });
+      callbackForAdding();
+      onClose();
       setLoading(false);
     } catch (err) {
       toast({

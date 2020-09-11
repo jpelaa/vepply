@@ -44,7 +44,7 @@ export const getModel = (searchParams: string) => {
     try {
       const modelAPI = await client({
         body: {
-          query: `{service_entry(
+          query: `{service_entry(distinct_on: model,
                         where: {model: {_like: "%${searchParams}%"}}
                     ) {
                        label : model
