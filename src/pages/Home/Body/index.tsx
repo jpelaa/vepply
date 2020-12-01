@@ -19,6 +19,8 @@ import {
   PopoverTrigger,
   PopoverContent,
   useToast,
+  FormLabel,
+  Textarea,
 } from "@chakra-ui/core";
 import AddNewSection from "./AddNewSection";
 import Category from "../../../components/Category";
@@ -35,6 +37,8 @@ const Body: React.SFC = () => {
   const { state, dispatch } = React.useContext(StateContext);
   const [statusList, setStatusList] = React.useState<any>([]);
   const [changeStatus, setChangeStatus] = React.useState<string>("");
+  const [comments, setComments] = React.useState<string>("");
+
   const [selectedBillNo, setSelectedBillNo] = React.useState<string>("");
   const [isLoading, setLoading] = React.useState<boolean>(false);
   const toast = useToast();
@@ -70,7 +74,12 @@ const Body: React.SFC = () => {
   const handleChangeStatus = async () => {
     try {
       setLoading(true);
-      await updateStatus(state.selectedCategory, selectedBillNo, changeStatus);
+      await updateStatus(
+        state.selectedCategory,
+        selectedBillNo,
+        changeStatus,
+        comments
+      );
       toast({
         title: "Success",
         position: "top-right",
@@ -195,7 +204,11 @@ const Body: React.SFC = () => {
                         <Button
                           variantColor="green"
                           size="xs"
-                          onClick={() => setSelectedBillNo(data.bill_no)}
+                          onClick={() => {
+                            setSelectedBillNo(data.bill_no);
+                            setComments(data.comments);
+                            setChangeStatus(data.status);
+                          }}
                         >
                           Edit
                         </Button>
@@ -211,17 +224,30 @@ const Body: React.SFC = () => {
                         <PopoverArrow />
                         <PopoverCloseButton />
                         <PopoverBody>
-                          <Select
-                            onChange={(e: any) =>
-                              setChangeStatus(e.target.value)
-                            }
-                          >
-                            {statusList.map((data: any) => {
-                              return (
-                                <option value={data.value}>{data.label}</option>
-                              );
-                            })}
-                          </Select>
+                          <Box>
+                            <Select
+                              onChange={(e: any) =>
+                                setChangeStatus(e.target.value)
+                              }
+                              value={changeStatus}
+                            >
+                              {statusList.map((data: any) => {
+                                return (
+                                  <option value={data.value}>
+                                    {data.label}
+                                  </option>
+                                );
+                              })}
+                            </Select>
+                          </Box>
+                          <Box>
+                            <FormLabel htmlFor="comments">Comments</FormLabel>
+                            <Textarea
+                              id="comments"
+                              value={comments}
+                              onChange={(e: any) => setComments(e.target.value)}
+                            />
+                          </Box>
                         </PopoverBody>
                         <PopoverFooter
                           border="0"
