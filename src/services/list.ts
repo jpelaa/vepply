@@ -7,12 +7,12 @@ const listOrderQuery = (pageNo: number) => `{
       totalCount: count
     }
   }
- list : order_entry(limit: ${PAGE_LIMIT}, offset: ${pageNo}) {
+ list : order_entry(limit: ${PAGE_LIMIT}, offset: ${pageNo},order_by: {bill_no: desc}) {
     amount
     comments
     created_date
    name : order_name
-   bill_no: order_no
+   bill_no
    status : order_status
   }
 }`;
@@ -23,12 +23,12 @@ const listServiceQuery = (pageNo: number) => `{
       totalCount: count
     }
   }
- list : service_entry(limit: ${PAGE_LIMIT}, offset: ${pageNo}) {
+ list : service_entry(limit: ${PAGE_LIMIT}, offset: ${pageNo},order_by: {bill_no: desc}) {
     amount
     comments
     created_date
    name : model
-  bill_no:  service_no
+  bill_no
   status 
   }
 }`;

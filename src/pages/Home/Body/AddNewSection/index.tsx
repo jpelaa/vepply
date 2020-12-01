@@ -52,6 +52,7 @@ const AddNewSection: React.SFC<AddNewSectionProps> = ({
     amount: null,
     comments: "",
     created_date: new Date(),
+    bill_no: "",
   });
   const toast = useToast();
   const [timerHandle, setTimerHandle] = React.useState<any>();
@@ -134,6 +135,7 @@ const AddNewSection: React.SFC<AddNewSectionProps> = ({
         finalFocusRef={btnRef}
         size={"md"}
         onClose={onClose}
+        scrollBehavior={"inside"}
         isFullHeight
       >
         <DrawerOverlay />
@@ -145,6 +147,18 @@ const AddNewSection: React.SFC<AddNewSectionProps> = ({
 
           <DrawerBody>
             <Stack spacing="24px">
+              <Box>
+                <FormLabel htmlFor="bill_no">Bill No</FormLabel>
+                <Input
+                  id="bill_no"
+                  onChange={(e: any) =>
+                    setAddEntryData({
+                      ...entryData,
+                      bill_no: e.target.value,
+                    })
+                  }
+                />
+              </Box>
               {selectedCategory === INVENTORY_TYPES.order && (
                 <Box>
                   <FormLabel htmlFor="order_name">Order Name</FormLabel>

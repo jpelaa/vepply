@@ -6,9 +6,9 @@ export const insertServiceEntry = async (entryData: any) => {
     const insertServiceEntryAPI = await client({
       body: {
         query: `mutation InsertServiceEntry {
-            insert_service_entry(objects: {amount: ${
-              entryData.amount
-            }, comments: "${
+            insert_service_entry(objects: {
+              bill_no : "${entryData.bill_no}",
+              amount: ${entryData.amount}, comments: "${
           entryData.comments
         }", created_date: "${new Intl.DateTimeFormat(
           "en-US",
@@ -32,7 +32,9 @@ export const insertOrderEntry = async (entryData: any) => {
     const insertServiceEntryAPI = await client({
       body: {
         query: `mutation MyMutation {
-  insert_order_entry(objects: {amount: ${entryData.amount}, comments: "${
+  insert_order_entry(objects: { bill_no : "${entryData.bill_no}",amount: ${
+          entryData.amount
+        }, comments: "${
           entryData.comments
         }", created_date: "${new Intl.DateTimeFormat(
           "en-US",
